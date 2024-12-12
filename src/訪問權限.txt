@@ -1,0 +1,9 @@
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const role = localStorage.getItem("role");
+        if (role !== "receiver") {
+            alert("您無權訪問此頁面！");
+            window.location.href = "login.html";
+        }
+    });
+</script>

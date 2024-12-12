@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>接收人員問題管理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .timer {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .btn-start {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-start:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>接收人員問題管理</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>問題編號</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="problem-list">
+                <!-- Dynamic content will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Example data for problems
+        const problems = [
+            { id: 1, description: "網路不通", status: "待處理", resolution: "", startTime: null },
+            { id: 2, description: "伺服器異常", status: "待處理", resolution: "", startTime: null },
+            { id: 3, description: "硬碟空間不足", status: "待處理", resolution: "", startTime: null }
+        ];
+
+        function renderProblems() {
+            const problemList = document.getElementById('problem-list');
+            problemList.innerHTML = '';
+
+            problems.forEach(problem => {
+                const row = document.createElement('tr');
+
+                let timerDisplay = '';
+                if (problem.startTime) {
+                    const elapsedTime = calculateElapsedTime(problem.startTime);
+                    timerDisplay = `<div class="timer">已用時: ${elapsedTime}</div>`;
+                }
+
+                row.innerHTML = `
+                    <td>${problem.id}</td>
+                    <td>${problem.description}</td>
+                    <td class="actions">
+                        ${problem.status === "待處理" ? `<button class="btn-start" onclick="startProcessing(${problem.id})">開始</button>` : ''}
+                        ${problem.startTime ? `<textarea id="resolution-${problem.id}" rows="3" placeholder="請填寫處理過程..." >${problem.resolution}</textarea>` : '<textarea disabled></textarea>'}
+                        ${problem.startTime ? `<button onclick="completeProblem(${problem.id})">完成</button>` : ''}
+                        ${timerDisplay}
+                    </td>
+                `;
+
+                problemList.appendChild(row);
+            });
+        }
+
+        function startProcessing(problemId) {
+            const problem = problems.find(p => p.id === problemId);
+
+            if (problem) {
+                problem.startTime = new Date(); // 開始計時
+                problem.status = "處理中"; // 更新狀態
+                renderProblems(); // 重新渲染頁面
+            }
+        }
+
+        function calculateElapsedTime(startTime) {
+            const now = new Date();
+            const diff = Math.floor((now - startTime) / 1000);
+            const hours = Math.floor(diff / 3600);
+            const minutes = Math.floor((diff % 3600) / 60);
+            const seconds = diff % 60;
+            return `${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        function completeProblem(problemId) {
+            const problem = problems.find(p => p.id === problemId);
+            const resolutionField = document.getElementById(`resolution-${problemId}`);
+            const resolution = resolutionField ? resolutionField.value.trim() : '';
+
+            if (!resolution) {
+                alert(`請填寫處理過程後才能完成案件 ${problemId}！`);
+                return;
+            }
+
+            if (problem) {
+                problem.resolution = resolution;
+                problem.status = "已完成";
+                problem.startTime = null;
+                alert(`案件 ${problemId} 已完成！\n處理過程: ${resolution}`);
+                renderProblems();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProblems();
+
+            setInterval(() => {
+                problems.forEach(problem => {
+                    if (problem.startTime) {
+                    const timerElement = document.querySelector(`#problem-${problem.id} .timer`);
+                    if (timerElement) {
+                        timerElement.textContent = `已用時: ${calculateElapsedTime(problem.startTime)}`;
+                    }
+                }
+            });
+        }, 1000); // 每秒更新一次計時器
+    });
+    </script>
+</body>
+</html>

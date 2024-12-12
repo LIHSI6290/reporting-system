@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回報人補充資料</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 100px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        textarea, input[type="file"] {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="logo_with_border.png" alt="公司 LOGO">
+        </div>
+        <h1>回報人補充資料</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>問題編號</th>
+                    <th>描述</th>
+                    <th>補充資料</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="problem-list">
+                <!-- 動態生成問題列表 -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const problems = [
+            { id: 1, description: "網路不通", supplemental: false },
+            { id: 2, description: "伺服器異常", supplemental: false }
+        ];
+
+        function renderProblems() {
+            const problemList = document.getElementById("problem-list");
+            problemList.innerHTML = "";
+
+            problems.forEach(problem => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${problem.id}</td>
+                    <td>${problem.description}</td>
+                    <td>
+                        <textarea placeholder="補充說明"></textarea>
+                        <input type="file">
+                    </td>
+                    <td>
+                        <button onclick="submitSupplement(${problem.id})">提交補充資料</button>
+                    </td>
+                `;
+
+                problemList.appendChild(row);
+            });
+        }
+
+        function submitSupplement(problemId) {
+            alert(`補充資料已提交，案件編號：${problemId}`);
+        }
+
+        document.addEventListener("DOMContentLoaded", renderProblems);
+    </script>
+</body>
+</html>

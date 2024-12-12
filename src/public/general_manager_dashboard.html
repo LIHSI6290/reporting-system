@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>總經理問題管理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 10px;
+            resize: none;
+        }
+
+        .readonly {
+            background-color: #f4f4f4;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>總經理問題管理</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>問題編號</th>
+                    <th>描述</th>
+                    <th>留言記錄</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="problem-list">
+                <!-- Dynamic content will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function fetchProblems() {
+            const response = await fetch('http://localhost:3000/api/problems');
+            const problems = await response.json();
+            renderProblems(problems);
+        }
+
+        function renderProblems(problems) {
+            const problemList = document.getElementById('problem-list');
+            problemList.innerHTML = '';
+
+            problems.forEach(problem => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${problem.id}</td>
+                    <td>${problem.description}</td>
+                    <td>
+                        ${problem.comments.map(comment => `<p><strong>${comment.user}:</strong> ${comment.message}</p>`).join('')}
+                    </td>
+                    <td>
+                        <textarea id="feedback-${problem.id}" rows="3" placeholder="請填寫評語..."></textarea>
+                        <button onclick="sendFeedback(${problem.id})">已讀</button>
+                        <button onclick="returnProblem(${problem.id})">退回</button>
+                    </td>
+                `;
+                problemList.appendChild(row);
+            });
+        }
+
+        async function sendFeedback(problemId) {
+            const feedbackField = document.getElementById(`feedback-${problemId}`);
+            const feedback = feedbackField.value.trim();
+
+            if (!feedback) {
+                alert('請填寫評語！');
+                return;
+            }
+
+            await fetch(`http://localhost:3000/api/problems/${problemId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ feedback, status: '已讀' })
+            });
+
+            fetchProblems();
+        }
+
+        async function returnProblem(problemId) {
+            await fetch(`http://localhost:3000/api/problems/${problemId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: '退回', comment: '需進一步處理' })
+            });
+
+            fetchProblems();
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchProblems);
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>內部異常回報系統</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9f9f9;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 90%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logo img {
+            max-width: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            text-align: left;
+            margin: 10px 0 5px;
+        }
+
+        input, select, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- LOGO -->
+        <div class="logo">
+            <img src="logo_with_border.png" alt="公司 LOGO">
+        </div>
+
+        <!-- Title -->
+        <h1>內部異常回報系統</h1>
+
+        <!-- Form -->
+        <form id="reportForm">
+            <label for="description">描述：</label>
+            <input type="text" id="description" placeholder="輸入問題描述" required>
+
+            <label for="type">類型：</label>
+            <input type="text" id="type" placeholder="輸入問題類型" required>
+
+            <label for="priority">優先級：</label>
+            <input type="text" id="priority" placeholder="輸入優先級" required>
+
+            <label for="department">部門：</label>
+            <select id="department" required>
+                <option value="">選擇部門</option>
+                <option value="管理部">管理部</option>
+                <option value="業務部">業務部</option>
+                <option value="客服部">客服部</option>
+                <option value="研發部">研發部</option>
+                <option value="製造部">製造部</option>
+                <option value="膠藝所">膠藝所</option>
+            </select>
+
+            <label for="receiver">接收人員：</label>
+            <select id="receiver" required>
+                <option value="">請先選擇部門</option>
+            </select>
+
+            <button type="submit">提交</button>
+        </form>
+    </div>
+</body>
+</html>

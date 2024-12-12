@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主管結案管理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-complete {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background-color: #218838;
+        }
+
+        .btn-return {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-return:hover {
+            background-color: #c82333;
+        }
+
+        textarea {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>主管結案管理</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>問題編號</th>
+                    <th>描述</th>
+                    <th>補充說明</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="problem-list">
+                <!-- Dynamic content will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Example data for problems ready for closure
+        const problemsToClose = [
+            { id: 1, description: "網路不通", notes: "已完成修復，請主管確認。", history: ["提交: 網路不通", "處理中: 更換路由器"], returnCount: 0 },
+            { id: 2, description: "伺服器異常", notes: "伺服器已重新啟動，運行正常。", history: ["提交: 無法連線伺服器", "處理中: 重啟伺服器"], returnCount: 0 }
+        ];
+
+        function renderProblemsToClose() {
+            const problemList = document.getElementById('problem-list');
+            problemList.innerHTML = '';
+
+            problemsToClose.forEach(problem => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${problem.id}</td>
+                    <td>${problem.description}</td>
+                    <td>
+                        <textarea id="note-${problem.id}" rows="3" readonly>${problem.notes}</textarea>
+                        <button onclick="viewHistory(${problem.id})" style="margin-top: 10px;">查看歷史</button>
+                    </td>
+                    <td class="actions">
+                        <button class="btn-complete" onclick="closeProblem(${problem.id})">結案</button>
+                        <button class="btn-return" onclick="returnProblem(${problem.id})">退回</button>
+                    </td>
+                `;
+
+                problemList.appendChild(row);
+            });
+        }
+
+        function closeProblem(problemId) {
+            const problemIndex = problemsToClose.findIndex(p => p.id === problemId);
+
+            if (problemIndex !== -1) {
+                alert(`案件 ${problemId} 已結案！`);
+                problemsToClose.splice(problemIndex, 1); // Remove the closed problem
+                renderProblemsToClose();
+            }
+        }
+
+        function returnProblem(problemId) {
+            const problem = problemsToClose.find(p => p.id === problemId);
+
+            if (problem) {
+                problem.returnCount += 1;
+                problem.history.push(`退回: 第 ${problem.returnCount} 次，需補充資料。`);
+                alert(`案件 ${problemId} 已退回。退回次數: ${problem.returnCount}`);
+                renderProblemsToClose();
+            }
+        }
+
+        function viewHistory(problemId) {
+            const problem = problemsToClose.find(p => p.id === problemId);
+
+            if (problem) {
+                alert(`案件 ${problemId} 的歷史記錄:\n\n${problem.history.join('\n')}`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', renderProblemsToClose);
+    </script>
+</body>
+</html>

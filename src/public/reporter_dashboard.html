@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回報人補充資料</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="file"], textarea {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>回報人補充資料</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>問題編號</th>
+                    <th>描述</th>
+                    <th>補充資料</th>
+                    <th>重新提交</th>
+                </tr>
+            </thead>
+            <tbody id="problem-list">
+                <!-- Dynamic content will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Example data for returned problems
+        const returnedProblems = [
+            { id: 1, description: "網路不通", creator: "王小明", isClosed: true },
+            { id: 2, description: "伺服器異常", creator: "張大衛", isClosed: true }
+        ];
+
+        function renderReturnedProblems() {
+            const problemList = document.getElementById('problem-list');
+            problemList.innerHTML = '';
+
+            returnedProblems.forEach(problem => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${problem.id}</td>
+                    <td>${problem.description}</td>
+                    <td class="actions">
+                        <textarea id="note-${problem.id}" placeholder="補充說明..." rows="3"></textarea>
+                        <input type="file" id="file-${problem.id}" accept="image/*,video/*">
+                        <button onclick="submitSupplement(${problem.id})">提交補充資料</button>
+                    </td>
+                    <td>
+                        ${problem.isClosed ? `<button onclick="reopenProblem(${problem.id})">重新提交</button>` : ''}
+                    </td>
+                `;
+
+                problemList.appendChild(row);
+            });
+        }
+
+        function submitSupplement(problemId) {
+            const fileInput = document.getElementById(`file-${problemId}`);
+            const noteInput = document.getElementById(`note-${problemId}`);
+            const file = fileInput.files[0];
+            const note = noteInput.value.trim();
+
+            if (!file && !note) {
+                alert('請至少提供補充說明或上傳文件！');
+                return;
+            }
+
+            // Simulate file upload and note submission
+            alert(`案件 ${problemId} 的補充資料已提交！\n文件名稱：${file ? file.name : '無'}\n補充說明：${note || '無'}`);
+
+            // Remove the problem from the list after submission
+            const index = returnedProblems.findIndex(p => p.id === problemId);
+            if (index !== -1) {
+                returnedProblems[index].isClosed = false; // Mark as reopened
+                renderReturnedProblems();
+            }
+        }
+
+        function reopenProblem(problemId) {
+            const problem = returnedProblems.find(p => p.id === problemId);
+
+            if (problem) {
+                alert(`案件 ${problemId} 已重新提交，請再次處理。`);
+                problem.isClosed = false; // Reset closure flag
+                renderReturnedProblems();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', renderReturnedProblems);
+    </script>
+</body>
+</html>
