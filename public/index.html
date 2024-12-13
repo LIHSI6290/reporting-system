@@ -1,89 +1,212 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>內部異常回報系統</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9f9f9;
+            min-height: 100vh;
+        }
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/11.0.2/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/11.0.2/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/11.0.2/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/11.0.2/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/11.0.2/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/11.0.2/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/11.0.2/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/11.0.2/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/11.0.2/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/11.0.2/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+        .container {
+            max-width: 400px;
+            width: 90%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
+        .logo img {
+            max-width: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            text-align: left;
+            margin: 10px 0 5px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #successMessage {
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
+        }
     </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+</head>
+<body>
+    <div class="container">
+        <!-- LOGO -->
+        <div class="logo">
+            <img src="logo_with_border.png" alt="公司 LOGO">
+        </div>
+
+        <!-- Title -->
+        <h1>內部異常回報系統</h1>
+
+        <!-- User Info -->
+        <div class="user-info">
+            登入成功：<span id="userInfo"></span>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage">問題已成功回報！</div>
+
+        <!-- Form -->
+        <form id="reportForm">
+            <label for="description">描述：</label>
+            <input type="text" id="description" placeholder="輸入問題描述" required>
+
+            <label for="type">類型：</label>
+            <input type="text" id="type" placeholder="輸入問題類型" required>
+
+            <label for="priority">優先級：</label>
+            <input type="text" id="priority" placeholder="輸入優先級" required>
+
+            <label for="department">部門：</label>
+            <select id="department" required>
+                <option value="">選擇部門</option>
+                <option value="management">管理部</option>
+                <option value="sales">業務部</option>
+                <option value="customer_service">客服部</option>
+                <option value="manufacturing">製造部</option>
+                <option value="rd">研發部</option>
+                <option value="adhesive_lab">膠藝所</option>
+            </select>
+
+            <label for="receiver">接收人員：</label>
+            <select id="receiver" required>
+                <option value="">請先選擇部門</option>
+            </select>
+
+            <button type="button" id="submitButton">提交</button>
+        </form>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+    // 模擬登入的員工資料
+    const loggedInUser = { id: 'A0005', name: '李佳芬' };
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+    // 顯示登入員工資訊
+    document.getElementById('userInfo').innerText = `${loggedInUser.id} - ${loggedInUser.name}`;
+
+    // 所有員工資料
+    const employees = [
+        { id: 'A0001', name: '魏自立', departmentId: 'management', role: 'ceo' },
+        { id: 'A0003', name: '張勝紘', departmentId: 'sales', role: 'employee' },
+        { id: 'A0005', name: '李佳芬', departmentId: 'management', role: 'manager' },
+        { id: 'A0006', name: '陳巧甄', departmentId: 'management', role: 'employee' },
+        { id: 'A0007', name: '李尚俞', departmentId: 'sales', role: 'employee' },
+        { id: 'A0008', name: '吳奕霖', departmentId: 'customer_service', role: 'employee' },
+        { id: 'A0009', name: '施博堅', departmentId: 'sales', role: 'manager' },
+        { id: 'A0010', name: '陳志威', departmentId: 'management', role: 'employee' },
+        { id: 'A0015', name: '湯敬驊', departmentId: 'customer_service', role: 'manager' },
+        { id: 'A0016', name: '陳季青', departmentId: 'management', role: 'employee' },
+        { id: 'A0020', name: '鄭義騰', departmentId: 'manufacturing', role: 'employee' },
+        { id: 'A0022', name: '黃豐裕', departmentId: 'manufacturing', role: 'manager' },
+        { id: 'A0023', name: '李政彥', departmentId: 'manufacturing', role: 'employee' },
+        { id: 'A0026', name: '黃思婷', departmentId: 'management', role: 'employee' },
+        { id: 'A0027', name: '葛寰宸', departmentId: 'manufacturing', role: 'employee' },
+        { id: 'A0028', name: '陳宥瑄', departmentId: 'adhesive_lab', role: 'employee' },
+        { id: 'A0030', name: '許智豪', departmentId: 'rd', role: 'employee' },
+        { id: 'A0035', name: '林祐駿', departmentId: 'sales', role: 'employee' },
+        { id: 'A0040', name: '李仁佃', departmentId: 'manufacturing', role: 'employee' },
+        { id: 'A0042', name: '莊福來', departmentId: 'rd', role: 'manager' },
+        { id: 'A0044', name: '李佩姍', departmentId: 'adhesive_lab', role: 'employee' },
+        { id: 'A0049', name: '林裕峰', departmentId: 'adhesive_lab', role: 'employee' },
+        { id: 'A0050', name: '張峻豪', departmentId: 'manufacturing', role: 'employee' },
+        { id: 'A0052', name: '廖靖寧', departmentId: 'adhesive_lab', role: 'employee' },
+        { id: 'A0053', name: '蘇千樺', departmentId: 'marketing', role: 'employee' },
+        { id: 'A0054', name: '潘韻如', departmentId: 'adhesive_lab', role: 'employee' },
+        { id: 'A0055', name: '黃伃均', departmentId: 'management', role: 'employee' },
+        { id: 'A0056', name: '廖紹君', departmentId: 'management', role: 'employee' },
+        { id: 'A0057', name: '張宇賢', departmentId: 'customer_service', role: 'employee' },
+        { id: 'A0058', name: '何昱臻', departmentId: 'management', role: 'employee' },
+        { id: 'A0059', name: '簡佳欣', departmentId: 'manufacturing', role: 'employee' },
+        { id: 'A0060', name: '胡妤甄', departmentId: 'adhesive_lab', role: 'employee' },
+    ];
+
+    // 動態加載部門與接收人員
+    document.getElementById('department').addEventListener('change', (e) => {
+        const departmentId = e.target.value;
+        const receiverSelect = document.getElementById('receiver');
+        receiverSelect.innerHTML = '<option value="">請選擇接收人員</option>';
+
+        employees
+            .filter(employee => employee.departmentId === departmentId)
+            .forEach(employee => {
+                const option = document.createElement('option');
+                option.value = employee.id;
+                option.textContent = `${employee.name} (${employee.position})`;
+                receiverSelect.appendChild(option);
+            });
+    });
+
+    // 提交表單事件處理
+    document.getElementById('submitButton').addEventListener('click', () => {
+        const description = document.getElementById('description').value;
+        const type = document.getElementById('type').value;
+        const priority = document.getElementById('priority').value;
+        const department = document.getElementById('department').value;
+        const receiver = document.getElementById('receiver').value;
+
+        if (description && type && priority && department && receiver) {
+            alert('回報成功！');
+            document.getElementById('description').value = '';
+            document.getElementById('type').value = '';
+            document.getElementById('priority').value = '';
+            document.getElementById('department').value = '';
+            document.getElementById('receiver').innerHTML = '<option value="">請選擇接收人員</option>';
+        } else {
+            alert('請填寫完整資料後提交！');
         }
-      });
-    </script>
-  </body>
+    });
+</script>
+
+</body>
 </html>
